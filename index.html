@@ -111,6 +111,16 @@
     will-change: transform;
   }
 
+  /* 문제 N 표지 */
+  .qi-eyebrow {
+    font-size: 32px; font-weight: 800; color: var(--muted); letter-spacing: 0.12em; margin-bottom: 24px;
+    animation: upIn .7s var(--ease-out) both;
+  }
+  .qi-title {
+    font-size: 260px; font-weight: 900; letter-spacing: -0.05em; line-height: 1;
+    animation: upIn .7s var(--ease-out) .08s both;
+  }
+
   /* 정답은 무엇일까요? */
   .q-label {
     font-size: 40px; font-weight: 800; color: var(--muted); margin-bottom: 28px;
@@ -280,6 +290,13 @@
   // 문제마다: 1~3단계 → 정답은 무엇일까요? → 정답
   const holder = document.getElementById("game-slides");
   ITEMS.forEach((item, qi) => {
+    const intro = document.createElement("section");
+    intro.className = "slide";
+    intro.innerHTML = `
+      <div class="qi-eyebrow">QUESTION ${qi + 1}</div>
+      <div class="qi-title">문제 ${qi + 1}</div>`;
+    holder.appendChild(intro);
+
     STAGES.forEach((sec, si) => {
       const s = document.createElement("section");
       s.className = "slide game";
@@ -343,8 +360,8 @@
     if (slide.classList.contains("active")) document.body.classList.toggle("is-done", state === "done");
   }
 
-  // 페이지 위치: 제목 0, 설명 1, 문제 q 시작 = 2 + q*5 (1~3단계, 정답은?, 정답)
-  const PER_Q = STAGES.length + 2;
+  // 페이지 위치: 제목 0, 설명 1, 문제 q 시작 = 2 + q*6 (문제 N, 1~3단계, 정답은?, 정답)
+  const PER_Q = STAGES.length + 3;
   const qStart = (q) => 2 + q * PER_Q;
   const qOf = (i) => (i >= 2 && i < qStart(ITEMS.length)) ? Math.floor((i - 2) / PER_Q) : -1;
 
@@ -437,7 +454,7 @@
   document.getElementById("answer-btn").onclick = (e) => {
     e.stopPropagation();
     const q = qOf(idx);
-    if (q >= 0) show(qStart(q) + STAGES.length + 1);
+    if (q >= 0) show(qStart(q) + PER_Q - 1);
   };
 
   // 화면 아무 곳이나 클릭해도 다음으로
